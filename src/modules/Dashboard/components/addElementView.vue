@@ -3,14 +3,19 @@
       <v-form ref="form" @submit.prevent="onSubmit">
         <!-- Validación del email -->
         <v-text-field
-          v-model="name"
-          label="name"
+          v-model="nombre"
+          label="nombre"
         ></v-text-field>
   
         <!-- Validación de la contraseña -->
         <v-text-field
-          v-model="calories"
-          label="calories"  
+          v-model="descripcion"
+          label="descripcion"  
+        ></v-text-field>
+
+        <v-text-field
+          v-model="precio"
+          label="precio"  
         ></v-text-field>
         
         <v-btn class="mt-2" type="submit" block>añadir</v-btn>
@@ -29,19 +34,20 @@
   const form = ref()
   
   
-  const name = ref('');
-  const calories = ref('');
+  const nombre = ref('');
+  const descripcion = ref('');
+  const precio = ref('');
   
   // Función de submit
   const onSubmit = () => {
 
-    //TODO hacer rules para las categorias
+    //TODO hacer rules para las productos
     
-    emit('add',name.value,calories.value)  
+    emit('add',nombre.value,descripcion.value,precio.value)  
 
-    name.value = ''
-    calories.value = ''
-
+    nombre.value = ''
+    descripcion.value = ''
+    precio.value = ''
     
     
   };

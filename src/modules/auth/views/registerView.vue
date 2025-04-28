@@ -1,6 +1,14 @@
 <template>
     <v-sheet class="mx-auto" width="300">
       <v-form ref="form" @submit.prevent="onSubmit">
+        
+        <!-- Validación del email -->
+        <v-text-field
+          v-model="nombre"
+          :rules="nombreRules"
+          label="nombre"
+        ></v-text-field>
+        
         <!-- Validación del email -->
         <v-text-field
           v-model="email"
@@ -16,52 +24,38 @@
           type="password"
         ></v-text-field>
         
-        <v-btn class="mt-2" type="submit" block color="primary">Login</v-btn>
+        <v-btn class="mt-2" type="submit" block>Register</v-btn>
       </v-form>
-      <router-link to="auth/register">
-        <v-btn class="mt-2" block >Register</v-btn>
-      </router-link>
     </v-sheet>
-    
-    <template>
-      <GeneralModal v-model="activarModal" >
-          
-        <template v-slot:title>
-          <p class="text-center">Error</p>
-        </template>
-          <template v-slot:content>
-            <p class="text-center">{{ texto }}</p>
-          </template>
-      </GeneralModal>
-      
-    </template>
-    
-
 
     <router-view/>
-</template>
+  </template>
   
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { verifyUser } from '../store/actions';
-import { useStore } from 'vuex';
-import GeneralModal from '../components/generalModal.vue';
+  <script setup>
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useStore } from 'vuex';
+import { validateRegister } from '../helpers/services';
   
   const form = ref()
   const router = useRouter()
   const store = useStore()
 
-  const texto = ref('')
-  const activarModal = ref(false)
-  const email = ref('test1@GMAIL.COM');
+  const email = ref('test3@gmail.com');
   const password = ref('1234567');
+  const nombre = ref('pedropon')
   
   //  Reglas para el email
    const emailRules = [
      value => !!value || 'El correo es obligatorio', // Validación no vacío
      value => /.+@.+\..+/.test(value) || 'Por favor ingrese un correo válido', // Validación formato email
    ];
+   // Reglas para la contraseña
+   const nombreRules = [
+     value => !!value || 'El nombre es obligatorio', // Validación no vacío
+     value => value.length >= 6 || 'El nombre debe tener al menos 6 caracteres', // Validación longitud mínima
+   ];
+  
   
   // Reglas para la contraseña
    const passwordRules = [
@@ -82,26 +76,23 @@ import GeneralModal from '../components/generalModal.vue';
       
    const request = {
       correo: email.value,
-      password: password.value
+      password: password.value,
+      nombre: nombre.value
     }
 
+    console.log('Request:', request)
     
-    
-    const response = await store.dispatch('shared/verifyUser', request)
+    const response = await validateRegister(request)
     //const response = await verifyUser(request)
-
-    if(response.replyCode !== 200){
-      
-      texto.value = response.msg
-       // Activamos el modal cuando haya un error
-      
-       activarModal.value = true
-
+    console.log('Response:', response)
+    if(response.replyCode === 500){
+      console.log('Error Al autenticar')
+      //todo mostrar mensaje de error
       return 
     }
       
       
-    router.push({name:'dashboard' })
+    router.push({name:'home' })
   
     
     

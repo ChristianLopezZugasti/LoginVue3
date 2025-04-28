@@ -22,7 +22,21 @@ const router = createRouter({
           path:'auth/dashboard',
           name: 'dashboard',
           component: ()=> import('@/modules/Dashboard/views/DashboardView.vue'),
+          beforeEnter:(to,from,next) =>{
+            //todo verificar si el token es valido
+            const isAuthenticated = localStorage.getItem('token')
+            if(isAuthenticated){
+              next()
+            }else{
+              next({name:'home'})
+            }
+          }
         },
+        {
+          path:'auth/register',
+          name: 'register',
+          component: ()=> import('@/modules/auth/views/registerView.vue'),
+        }
        
        ]
     },
