@@ -1,7 +1,8 @@
 <template>
     <v-container class="d-flex flex-column align-center">
-      <v-data-table :headers="headers" :items="productos">
-    <template v-slot:item.progress="{ item }">
+      <v-data-table :headers="headers" :items="productos" :hover="true" >
+        
+      <template v-slot:item.progress="{ item }">
       <v-progress-linear
         :color="color(item.progress)"
         :model-value="item.progress"
@@ -17,40 +18,54 @@
       <v-btn
         variant="text"
         icon
-        @click="edit(item)"
+        color="blue"
+        
+        @click="edit(item.idproducto)"
         @mouseenter="register($event)"
       >
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
 
-      <v-btn variant="text" icon @click="removeProduct(item.idproducto)">
+      <v-btn variant="text" 
+      icon 
+      @click="removeProduct(item.idproducto)"
+      color="red-lighten-1">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </template>
   </v-data-table>
 
-  <v-dialog v-model="dialog" :activator="activator" max-width="500">
+  <v-dialog v-model="dialog" :activator="activator" max-width="500" @keydown.enter="save" >
     <v-confirm-edit
       ref="confirm"
       v-model="model"
       ok-text="save"
       @cancel="dialog = false"
       @save="save"
+      
     >
       <template v-slot:default="{ model: proxyModel, actions }">
         <v-card title="Modify Data">
           <v-card-text>
             <v-text-field
-              v-model="proxyModel.value.name"
-              label="Modify name"
+              v-model="proxyModel.value.nombre"
+              label="Modificar nombre"
             ></v-text-field>
 
+            <v-text-field
+              v-model="proxyModel.value.descripcion"
+              label="Modificar descripcion"
+            ></v-text-field>
+
+
             <v-number-input
-              v-model="proxyModel.value.progress"
-              label="Modify progress"
-              max="100"
-              min="0"
+              v-model="proxyModel.value.precio"
+              label="Modificar precio"
+              :max="100"
+              :min="0"
             ></v-number-input>
+
+
           </v-card-text>
 
           <template v-slot:actions>
@@ -70,13 +85,7 @@
           color="primary"
           @click="add = !add"
         />
-        <v-btn 
-          density="compact" 
-          icon="mdi-cancel"
-          color="red"
-          
-        />
-
+        
         
     </div>
 
@@ -96,7 +105,7 @@
   import { onMounted, ref ,computed} from 'vue'
  
 import AddElementView from '../components/addElementView.vue';
-import { AddProducto, obtenerProductos } from '../helpers/services';
+import { AddProducto, DeleteProducto, obtenerProductos, obtenerProductosPorId, UpdateProducto } from '../helpers/services';
   
 const add = ref(false)
 const productos = ref([])
@@ -108,11 +117,14 @@ const productos = ref([])
   const confirm = ref(null)
 
   const model = ref({
-    name: '',
-    progress: 0,
+    nombre: '',
+    descripcion: 0,
+    precio: 0,
   })
 
-  const selected = ref()
+  const selectedId = ref(null)
+
+ 
 
   //los headers  necesitan coincidir con los nombres de cada fila 
   const headers = [
@@ -141,25 +153,43 @@ const productos = ref([])
   }
 
   // Select & load data to be edited
-  function edit (productos) {
-    selected.value = productos.idproducto
-    model.value = { name: item.name, progress: item.progress }
+  const edit = async (id) => {
+    
+    
+    const producto = await obtenerProductosPorId(id)
+    console.log('producto',producto)
+
+    model.value = { nombre: producto.nombre, 
+                    descripcion: producto.descripcion, 
+                    precio: producto.precio 
+    }
+    selectedId.value = id
+    //save()
+    
   }
 
   // Update item data
-  function save () {
-    dialog.value = false
+  const save = async() =>{
+    
+    const response = await UpdateProducto(selectedId.value, model.value)
+    console.log('response',response)
 
-    items.value = items.value.map(item =>
-      item.id === selected.value
-        ? { ...item, name: model.value.name, progress: model.value.progress }
-        : item
-    )
+
+
+    loadProduct()
+    dialog.value = false
+    
+    
+    
   }
 
-  function removeProduct (id) {
+  const removeProduct = async (id)=> {
     console.log(id)
-  
+    const response = await DeleteProducto(id) 
+    console.log(response)
+    //cargar productos otra vez
+    loadProduct()
+    
   }
 
 
@@ -170,7 +200,14 @@ const productos = ref([])
       descripcion,
       precio
     }
-    const response = await AddProducto(request)
+    try{
+      const response = await AddProducto(request)
+      console.log(response)
+    }
+    catch(error){
+      console.error('Error al agregar el producto:', error)
+    }
+
     //cargar productos otra vez 
     loadProduct()
   }
