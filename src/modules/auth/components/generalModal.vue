@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="modelValue" :max-width="widthModal" persistent v-color="red">
+  <v-dialog v-model="modelValue" :max-width="widthModal" persistent>
     <!-- Activador -->
     <template v-slot:activator="{ on, attrs }">
       <v-list-item v-if="list" link v-bind="attrs" v-on="on">
@@ -40,7 +40,8 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits,ref } from 'vue';
+const modelValue = ref()
 
 const props = defineProps({
  

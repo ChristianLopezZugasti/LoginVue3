@@ -1,5 +1,5 @@
 import { Api } from "@/api/tesloApi"
-import { isAxiosError } from "axios"
+
 
 export const validateLogin = async(values) =>{
 
@@ -29,8 +29,8 @@ export const validateRegister = async(values) => {
         return response.data
     }
     catch (error) { 
-        
-        if(isAxiosError(error) && error.response?.replyCode === 400){ //si es un error de axios
+        console.log('error:',error.status)
+        if(error.response?.status === 400){ //si es un error de axios
             return {
                 ok: false,
                 message: 'usuario o contra incorrecto'

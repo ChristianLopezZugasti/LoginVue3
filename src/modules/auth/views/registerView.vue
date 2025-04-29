@@ -5,26 +5,37 @@
         <!-- Validación del email -->
         <v-text-field
           v-model="nombre"
-          :rules="nombreRules"
+          :rules="[
+            rules.requerido,
+          ]"
           label="nombre"
         ></v-text-field>
         
         <!-- Validación del email -->
         <v-text-field
           v-model="email"
-          :rules="emailRules"
+          :rules="[
+            rules.requerido,
+            rules.correo,
+          ]"
           label="Email"
         ></v-text-field>
   
         <!-- Validación de la contraseña -->
         <v-text-field
           v-model="password"
-          :rules="passwordRules"
+          :rules="[
+            rules.requerido,
+            rules.limit10Caracteres
+          ]"
           label="Password"
           type="password"
         ></v-text-field>
         
         <v-btn class="mt-2" type="submit" block>Register</v-btn>
+
+        <SnackBar :text="message" :value="activator" :color="colorSnack" />
+        
       </v-form>
     </v-sheet>
 
@@ -34,34 +45,24 @@
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useStore } from 'vuex';
-import { validateRegister } from '../helpers/services';
+ 
+  import { validateRegister } from '../helpers/services';
+  import { rules } from '@/constants/rules';
+import SnackBar from '../components/SnackBar.vue';
   
+
+   //snackBar
+  const message = ref('hola perro') 
+  const activator = ref(false)
+  const colorSnack = ref('red')
+
   const form = ref()
   const router = useRouter()
-  const store = useStore()
-
+ 
   const email = ref('test3@gmail.com');
   const password = ref('1234567');
   const nombre = ref('pedropon')
   
-  //  Reglas para el email
-   const emailRules = [
-     value => !!value || 'El correo es obligatorio', // Validación no vacío
-     value => /.+@.+\..+/.test(value) || 'Por favor ingrese un correo válido', // Validación formato email
-   ];
-   // Reglas para la contraseña
-   const nombreRules = [
-     value => !!value || 'El nombre es obligatorio', // Validación no vacío
-     value => value.length >= 6 || 'El nombre debe tener al menos 6 caracteres', // Validación longitud mínima
-   ];
-  
-  
-  // Reglas para la contraseña
-   const passwordRules = [
-     value => !!value || 'La contraseña es obligatoria', // Validación no vacío
-     value => value.length >= 6 || 'La contraseña debe tener al menos 6 caracteres', // Validación longitud mínima
-   ];
   
   // Función de submit
   const onSubmit = async() => {
@@ -79,22 +80,24 @@ import { validateRegister } from '../helpers/services';
       password: password.value,
       nombre: nombre.value
     }
-
-    console.log('Request:', request)
-    
-    const response = await validateRegister(request)
-    //const response = await verifyUser(request)
-    console.log('Response:', response)
-    if(response.replyCode === 500){
-      console.log('Error Al autenticar')
-      //todo mostrar mensaje de error
-      return 
-    }
-      
-      
-    router.push({name:'home' })
   
-    
-    
-  };
-  </script>
+    //TODO VERIFICAR REGISTER PONERLO BIEN 
+    const response = await validateRegister(request)
+        activateSnack('Usuario creado con éxito', 'green')
+
+        setTimeout(() => {
+        router.push({ name: 'home' })
+        }, 1500)
+
+  }
+  
+
+  const activateSnack = (messageParam, color = "primary") => {
+  message.value = messageParam;
+  colorSnack.value = color;
+  activator.value = true;
+  setTimeout(() => {
+    activator.value = false;
+  }, 5000);
+};
+</script>
