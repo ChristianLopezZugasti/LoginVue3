@@ -60,8 +60,8 @@ import { rules } from '@/constants/rules';
   const router = useRouter()
   const store = useStore()
 
-  const email = ref(''); //test1@GMAIL.COM
-  const password = ref(''); //1234567
+  const email = ref('test6@gmail.com'); //test1@GMAIL.COM
+  const password = ref('1234567'); //1234567
   const disabledRegister = ref(true)
   
   // Función de submit

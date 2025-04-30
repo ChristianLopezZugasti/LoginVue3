@@ -26,10 +26,14 @@ export const validateRegister = async(values) => {
 
     try {
         const response = await Api.post('/usuarios',values)
-        return response.data
+        return{
+            response,
+            ok: true,
+            message: 'Usuario creado correctamente'
+        } 
     }
     catch (error) { 
-        console.log('error:',error.status)
+        
         if(error.response?.status === 400){ //si es un error de axios
             return {
                 ok: false,

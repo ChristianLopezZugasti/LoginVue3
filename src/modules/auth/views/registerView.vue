@@ -32,7 +32,7 @@
           type="password"
         ></v-text-field>
         
-        <v-btn class="mt-2" type="submit" block>Register</v-btn>
+        <v-btn class="mt-2" type="submit" block :disabled="DisabledButton">Register</v-btn>
 
         <SnackBar :text="message" :value="activator" :color="colorSnack" />
         
@@ -43,7 +43,7 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref,computed } from 'vue';
   import { useRouter } from 'vue-router';
  
   import { validateRegister } from '../helpers/services';
@@ -83,13 +83,30 @@ import SnackBar from '../components/SnackBar.vue';
   
     //TODO VERIFICAR REGISTER PONERLO BIEN 
     const response = await validateRegister(request)
-        activateSnack('Usuario creado con éxito', 'green')
-
+ 
+   
+    if(!response.ok){
+      activateSnack('Error al crear el usuario \n Ingrese sus datos nuevamente porfa','red')
+      email.value = ''
+      nombre.value = ''
+      password.value = ''
+      return
+    }
+    activateSnack('Usuario creado con éxito', 'green')
         setTimeout(() => {
         router.push({ name: 'home' })
         }, 1500)
 
   }
+
+  const DisabledButton = computed(() => {
+  //aplica cada regla de emailRules al valor actual de email, regresa true, si todas las reglas devueleven true
+  const nombreValid = [rules.requerido].every(rule => rule(nombre.value) === true)
+  const emailValid = [rules.requerido,rules.correo].every(rule => rule(email.value) === true)
+  const passwordValid = [rules.requerido,rules.limit10Caracteres].every(rule => rule(password.value) === true)
+  
+  return !(emailValid && passwordValid && nombreValid)
+})
   
 
   const activateSnack = (messageParam, color = "primary") => {

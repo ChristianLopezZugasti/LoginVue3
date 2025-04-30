@@ -42,6 +42,9 @@
       ok-text="save"
       @cancel="dialog = false"
       @save="save"
+      @keydown.enter="save"
+      :disabled="false"
+      
       
     >
       <template v-slot:default="{ model: proxyModel, actions }">
@@ -83,17 +86,17 @@
           density="compact" 
           icon="mdi-plus" 
           color="primary"
-          @click="add = !add"
+          @click="activatorAdd = !activatorAdd"
+          
         />
         
         
     </div>
 
-    <v-card v-if="add" variant="outlined">
         
-        <AddElementView @add="addProduct"/>
+    <AddElementView :value="activatorAdd"  @add="addProduct"  @close="activatorAdd=false"/>
       
-    </v-card>
+    
 
       
     </v-container>
@@ -107,11 +110,14 @@
 import AddElementView from '../components/addElementView.vue';
 import { AddProducto, DeleteProducto, obtenerProductos, obtenerProductosPorId, UpdateProducto } from '../helpers/services';
   
-const add = ref(false)
+const activator = ref(false)
+
+
+
 const productos = ref([])
   // v-dialog
   const dialog = ref(false)
-  const activator = ref(null)
+  const activatorAdd = ref(false)
 
   // v-confirm-edit
   const confirm = ref(null)
@@ -201,6 +207,7 @@ const productos = ref([])
       precio
     }
     try{
+      activatorAdd.value = false
       const response = await AddProducto(request)
       console.log(response)
     }
