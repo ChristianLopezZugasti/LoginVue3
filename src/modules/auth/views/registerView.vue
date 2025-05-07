@@ -87,9 +87,8 @@ import SnackBar from '../components/SnackBar.vue';
    
     if(!response.ok){
       activateSnack('Error al crear el usuario \n Ingrese sus datos nuevamente porfa','red')
-      email.value = ''
-      nombre.value = ''
-      password.value = ''
+      form.value.reset()
+
       return
     }
     activateSnack('Usuario creado con éxito', 'green')

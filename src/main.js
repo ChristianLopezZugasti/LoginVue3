@@ -1,4 +1,3 @@
-import './assets/main.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -22,9 +21,7 @@ const vuetify = createVuetify({
     icons: {
       defaultSet: 'mdi',
       aliases,
-      sets: {
-        mdi,
-      },
+      sets: {mdi,},
     },
   })
 

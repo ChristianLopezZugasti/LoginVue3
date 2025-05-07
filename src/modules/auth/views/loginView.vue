@@ -1,4 +1,9 @@
 <template>
+
+<h3 class="text-center display-1">
+    Iniciar Sesión
+</h3>
+
     <v-sheet class="mx-auto" width="300">
       <v-form ref="form" @submit.prevent="onSubmit">
         <!-- Validación del email -->
@@ -25,7 +30,7 @@
         <v-btn class="mt-2" type="submit" block color="primary" :disabled="DisabledButton">Login</v-btn>
       </v-form>
       <router-link  v-if="disabledRegister" to="auth/register">
-        <v-btn class="mt-2" block >Register</v-btn>
+        <v-btn class="mt-2 text-black" block variant="text" >Register</v-btn>
       </router-link>
     </v-sheet>
     
@@ -49,7 +54,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import SnackBar from '../components/SnackBar.vue';
 import { rules } from '@/constants/rules';
-  
+
   //snackBar
   const message = ref('hola perro') 
   const activator = ref(false)

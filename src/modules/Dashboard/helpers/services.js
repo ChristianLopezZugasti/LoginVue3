@@ -34,6 +34,7 @@ export const obtenerProductos = async () => {
 export const AddProducto = async (producto) => {
 
     try {
+        console.log(typeof(producto.descuento), producto.descuento)
         const response = await Api.post('/productos', producto) 
         console.log(response.data)
         return response.data

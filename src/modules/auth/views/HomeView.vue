@@ -1,19 +1,26 @@
 <template>
-    <v-app>
-      <div class="d-flex flex-column" style="min-height: 100vh;">
-        <v-main class="flex-grow-1">
+   <v-container>
+      <v-row class="d-flex justify-center align-center">
+        <v-col cols="12" md="12">
+          
+
+        <v-card outlined elevation="3">
           <router-view />
-        </v-main>
+        </v-card>
+
+        </v-col>
+
+
+      </v-row>
+      <CustomFooter style="margin-top: 480px;" />
   
-        <!-- Footer con espacio arriba -->
-        <CustomFooter style="margin-top: 480px;" />
-      </div>
-    </v-app>
+   </v-container>
   </template>
   
   
   <script setup>
   import CustomFooter from '../components/CustomFooter.vue';
   import { RouterView } from 'vue-router';
+
   </script>
   

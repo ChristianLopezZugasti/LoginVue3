@@ -27,9 +27,11 @@ export const rules = {
     return pattern.test(v) || "Solo números con tamaño de 10 dígitos";
   },
   ext: v => (!v || v.length <= 5) || 'Ingresa 5 dígitos como máximo',
-  number: v => /^([0-9])*$/.test(v) || 'Ingresa sólo números',
+  number: v => /^(\d+(\.\d+)?|\.\d+)$/.test(v) || 'Ingresa un número válido',
   noEmpleado: v => (!v || v.length === 6) || 'Ingresa un número de 6 dígitos',
   maxTres: v => /^([1-3])*$/.test(v) || 'Puedes aceptar máximo 3 alumnos',
-
+  selectEnItems: (items) => { return (v) =>
+      Array.isArray(v) && v.every(opcion => items.includes(opcion)) || 'Solo se permiten opciones válidas';
+  },
 
 };
