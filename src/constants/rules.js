@@ -35,10 +35,11 @@ export const rules = {
   },
   MayorEdad: (v) => {
     
-  
+    const [dia, month, anio] = v.split('/');
+    const fechaNacimiento = new Date(`${anio}-${month}-${dia}`);
+
     const fechaActual = new Date();
-    const fechaNacimiento = new Date(v);
-  
+    
     console.log(fechaActual);
     console.log(fechaNacimiento);
 
