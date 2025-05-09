@@ -35,28 +35,32 @@
                 rules.requerido
               ]"  
             ></v-text-field>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="precio"
+                    label="precio $"
+                    :rules="[
+                      rules.requerido,
+                      rules.number,
+                    ]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="descuento"
+                    label="descuento %"
+                    placeholder="0"
+                    :rules="[
+                      rules.requerido,
+                      rules.number,
+                    ]"
+                  ></v-text-field>
+                </v-col>
 
-            <v-text-field
-              v-model="precio"
-              label="precio $"  
-              
-              :rules="[
-                rules.requerido,
-                rules.number,
-              ]"
-            ></v-text-field>
 
-            <v-text-field
-              v-model="descuento"
-              label="descuento %"  
-              placeholder="0"
-              
-              :rules="[
-                rules.requerido,
-                rules.number,
-              ]"
-            > </v-text-field>
-
+              </v-row>
+                  
             <v-combobox
               v-model="complementos"
               :items="items"

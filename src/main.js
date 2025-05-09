@@ -13,16 +13,28 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 
 
 const vuetify = createVuetify({
-    components,
+  components: {
+    ...components,
+    VDateInput, // <--- Agregado aquí
+  },
     directives,
     icons: {
       defaultSet: 'mdi',
       aliases,
       sets: {mdi,},
     },
+    locale: {
+      locale: 'es',
+    },
+    date: {
+      locale: {
+        es: 'es-ES',
+      },
+    }, 
   })
 
 const app = createApp(App)

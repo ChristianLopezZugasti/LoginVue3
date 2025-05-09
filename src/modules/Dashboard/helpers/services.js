@@ -54,7 +54,6 @@ export const AddProducto = async (producto) => {
 export const UpdateProducto = async (id,producto) => {
     try {
         const response = await Api.put(`/productos/${id}`,producto)
-       // console.log(response.data)      
         return response.data
     }
     catch (error) {

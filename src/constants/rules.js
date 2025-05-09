@@ -33,5 +33,25 @@ export const rules = {
   selectEnItems: (items) => { return (v) =>
       Array.isArray(v) && v.every(opcion => items.includes(opcion)) || 'Solo se permiten opciones válidas';
   },
+  MayorEdad: (v) => {
+    
+  
+    const fechaActual = new Date();
+    const fechaNacimiento = new Date(v);
+  
+    console.log(fechaActual);
+    console.log(fechaNacimiento);
+
+    let edad = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
+    console.log(edad);
+    const mes = fechaActual.getMonth() - fechaNacimiento.getMonth();
+  
+    if (mes < 0 || (mes === 0 && fechaActual.getDate() < fechaNacimiento.getDate())) {
+      edad--;
+    }
+  
+    return edad >= 18 || 'Debes ser mayor de edad';
+  }
+  
 
 };

@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import LoginView from '@/modules/auth/views/loginView.vue'
 import HomeView from '@/modules/auth/views/HomeView.vue'
+import DashboardRoute from '@/modules/Dashboard/router/index.js'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +11,7 @@ const router = createRouter({
     {
       path:'/',
       name:'home',
+
       component:HomeView,
       redirect:{ name:'auth'},
       children:[
@@ -19,20 +22,6 @@ const router = createRouter({
           
         },
         {
-          path:'auth/dashboard',
-          name: 'dashboard',
-          component: ()=> import('@/modules/Dashboard/views/DashboardView.vue'),
-          beforeEnter:(to,from,next) =>{
-            //todo verificar si el token es valido
-            const isAuthenticated = localStorage.getItem('token')
-            if(isAuthenticated){
-              next()
-            }else{
-              next({name:'home'})
-            }
-          }
-        },
-        {
           path:'auth/register',
           name: 'register',
           component: ()=> import('@/modules/auth/views/registerView.vue'),
@@ -40,10 +29,9 @@ const router = createRouter({
        
        ]
     },
+    DashboardRoute
     
-    
-    
-     
+
   ],
 })
 

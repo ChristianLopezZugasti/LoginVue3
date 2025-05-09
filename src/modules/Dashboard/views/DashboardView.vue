@@ -1,15 +1,47 @@
 <template>
   <v-container class="d-flex flex-column align-center">
-      <v-data-table :headers="headers" :items="productos" :hover="true" >
+    <v-card outlined elevation="3" class="pa-10">
+      <v-row>
+        <v-col cols="7">
+          <v-text-field
+          class="hover-textfield"
+            density="compact"
+            v-model="search"
+            placeholder="Buscar por nombre,id o descripcion"
+            prepend-inner-icon="mdi-magnify"
+            variant="solo"
+            
+            flat
+            hide-details
+            single-line
+            clearable
+          ></v-text-field>
+        </v-col>
+        <v-col cols="5" class="d-flex justify-end align-center">
+          <v-btn color="primary" 
+          @click="activatorAdd = !activatorAdd"
+          prepend-icon="mdi-plus"
+          text="Añadir producto"
+          rounded="">
+          
+          </v-btn>
+        </v-col>
+      </v-row>
+      
+
+    <v-data-table :headers="headers" :items="productos" :hover="true"  :search="search" fixed-header   height="410px" >
         
       
     <template v-slot:item.CreatedAt="{item}">
-          <span>{{ item.CreatedAt.split('T')[0] }}</span>
+          <span>{{ formatDate(item.CreatedAt)}}</span>
     </template>
 
     <template v-slot:item.disponible="{item}">
-      <v-switch v-model="item.disponible" color="green" />
-    </template>
+      <v-chip :color="item.disponible ? 'green' : 'red'" variant="flat" size="100">
+        <v-icon> {{ item.disponible ? 'mdi-check' : 'mdi-close' }} </v-icon>
+      </v-chip>
+
+     </template>
 
     <template v-slot:item.descuento="{item}">
      <span>{{ item.descuento  }}%</span>  
@@ -88,8 +120,6 @@
   
   <v-dialog v-model="dialog" :activator="activator" max-width="500"  >
     
-      
-        
           <v-card title="Modify Data">
             <v-card-text>
               <v-form ref="form"  @submit.prevent="save"> 
@@ -107,17 +137,53 @@
                   :rules="[rules.requerido]"
                   required
                 ></v-text-field>
+                <v-combobox
+                   v-model="complementos"
+                  :items="items"
+                  label="Categoría"
+                  chips
+                  multiple
+                  clearable="true"
+                  closable-chips="true"
+                  no-data-text
+                  :rules="[rules.selectEnItems(items)]"
+                ></v-combobox>
 
 
-                <v-number-input
-                  v-model="precio"
-                  label="Modificar precio"
-                  :max="100"
-                  :min="0"
-                  :rules="[rules.requerido,rules.number]"
-                  required
-                ></v-number-input>
+                <v-row>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="precio"
+                    label="precio $"
+                    :rules="[
+                      rules.requerido,
+                      rules.number,
+                    ]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="descuento"
+                    label="descuento %"
+                    placeholder="0"
+                    :rules="[
+                      
+                      rules.number,
+                    ]"
+                  ></v-text-field>
+                </v-col>  
+
+                <v-col cols="4">
+                  <v-switch
+                  v-model="disponible"
+                  color="green"
+                  label="Activo"
+                ></v-switch>  
+                </v-col>
+              </v-row>
+               
                 
+                             
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="primary"  type="submit" text="GUARDAR" prepend-icon="mdi-content-save"></v-btn>
@@ -129,42 +195,43 @@
               </v-form>
             </v-card-text>
           </v-card>
-  </v-dialog>
-  
-    
-    <div class="d-flex justify-center mt-4" style="gap: 16px;">
-        <v-btn 
-          density="compact" 
-          icon="mdi-plus" 
-          color="primary"
-          @click="activatorAdd = !activatorAdd"
+    </v-dialog>
           
-        />
-    </div>
-
-        
-    <AddElementView :value="activatorAdd"  @add="addProduct"  @close="activatorAdd=false"/>
+      <AddElementView :value="activatorAdd"  @add="addProduct"  @close="activatorAdd=false"/>
       
-    
+    </v-card>
+  </v-container>
 
-      
-    </v-container>
     
   </template>
   
   
   <script setup>
-  import { onMounted, ref ,computed} from 'vue'
+  import { onMounted, ref } from 'vue'
  
 import AddElementView from '../components/addElementView.vue';
 import { AddProducto, DeleteProducto, obtenerProductos, obtenerProductosPorId, UpdateProducto } from '../helpers/services';
 import { rules } from '@/constants/rules';
+import { formatDate } from '@/constants/functions';
   
+const items = [
+    'Alimentos',
+    'Tecnologia',
+    'Linea Blanca',
+    'Hogar',
+    'Ropa',
+    'Juguetes',
+    'Deportes',
+  ]
+
+
+const search = ref('')
+
 const activator = ref(false)
 const DeleteActivator = ref(false)
 
 
-const productos = ref([])
+  const productos = ref([])
   // v-dialog
   const dialog = ref(false)
   const activatorAdd = ref(false)
@@ -172,31 +239,29 @@ const productos = ref([])
  
   const form = ref()
 
+  // VARIABLES PARA EDITAR 
   const nombre = ref('')
   const descripcion = ref('')
   const  precio = ref(0)
+  const descuento = ref(0)
+  const complementos = ref([])
+  const disponible = ref()
   
 
   const selectedId = ref('')
 
- 
- 
-
   //los headers  necesitan coincidir con los nombres de cada fila 
   const headers = [
     { title: 'ID', value: 'idproducto' },
-    { title: 'Disponible', value: 'disponible'},
+    { title: 'Activo', value: 'disponible'},
     { title: 'Name', value: 'nombre' },
     { title: 'Descripción', value: 'descripcion' },
     { title: 'Precio', value: 'precio'},
     { title: 'OFF', value: 'descuento' },
     { title: 'Fecha', value: 'CreatedAt'},
-    { title: 'Complementos', value: 'complementos'},
+    { title: 'Categoria', value: 'complementos'},
     { title: 'Actions', value: 'actions' },
   ]
-
-
-
 
   // Register current, hovered row to activator
   // Preferrably called before edit()
@@ -207,7 +272,8 @@ const productos = ref([])
   // Select & load data to be edited
   const edit = async (id) => {
     
-    
+    complementos.value = []
+
     const producto = await obtenerProductosPorId(id)
    // console.log('producto',producto)
 
@@ -215,14 +281,16 @@ const productos = ref([])
     nombre.value = producto.nombre
     descripcion.value = producto.descripcion
     precio.value = producto.precio
+    descuento.value = producto.descuento
+    disponible.value = producto.disponible
 
-    // model.value = { nombre: producto.nombre, 
-    //                 descripcion: producto.descripcion, 
-    //                 precio: producto.precio 
-    // }
-    selectedId.value = id
+    for(const comp of producto.complementos){
+      complementos.value.push(comp.nombre)
+    }
     
-    //save()
+
+   
+    selectedId.value = id
     
   }
 
@@ -232,7 +300,10 @@ const productos = ref([])
     const model = {
       nombre: nombre.value,
       descripcion: descripcion.value,
-      precio: precio.value
+      precio: precio.value,
+      descuento: parseFloat(descuento.value),
+      complementos: complementos.value,
+      disponible: disponible.value
     }
     
     
@@ -243,7 +314,7 @@ const productos = ref([])
     }
 
     const response = await UpdateProducto(selectedId.value, model)
-    //console.log('response',response)
+    console.log('response',response)
 
     loadProduct()
     dialog.value = false    
@@ -251,7 +322,7 @@ const productos = ref([])
 
   const removeProduct = async ()=> {
     const response = await DeleteProducto(selectedId.value) 
-    console.log(response)
+   
     DeleteActivator.value = false
     //cargar productos otra vez
     loadProduct()
@@ -261,11 +332,12 @@ const productos = ref([])
 
   const addProduct = async(nombre,descripcion,precio,descuento,complementos) => {
     
+   
     const request = {
       nombre,
       descripcion,
       precio,
-      descuento,
+      descuento: parseFloat(descuento),
       complementos
     }
 
@@ -288,8 +360,6 @@ const productos = ref([])
     productos.value = response
   }
 
- 
-
   onMounted(async() => {
     loadProduct()
   })
@@ -300,6 +370,7 @@ const productos = ref([])
 <style scoped>
   .v-data-table {
     max-width: 100%;
-    overflow-x: auto;
+    
   }
+  
 </style>

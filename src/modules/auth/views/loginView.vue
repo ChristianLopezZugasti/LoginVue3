@@ -1,48 +1,49 @@
 <template>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" xs="7" sm="6" md="6" lg="6" xl="6">
+        <v-card outlined elevation="3" class="pa-10"> 
+          <v-card-title class="d-flex justify-center align-center mt-2">
+              <div style="width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; ">
+                  <img src="@/assets/logo_dorado.gif" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+              </div>
+          </v-card-title>
 
-<h3 class="text-center display-1">
-    Iniciar Sesión
-</h3>
+          <v-card-title class="d-flex justify-center grey--text pt-0">Iniciar Sesión</v-card-title>
+          
+          
+            <v-form ref="form" @submit.prevent="onSubmit">
+            <v-text-field
+              v-model="email"
+              prepend-inner-icon="mdi-email"
+              :rules="[rules.requerido, rules.correo]"
+              label="Email"
+              variant="outlined"
+            />
 
-    <v-sheet class="mx-auto" width="300">
-      <v-form ref="form" @submit.prevent="onSubmit">
-        <!-- Validación del email -->
-        <v-text-field
-          v-model="email"
-          :rules="[
-            rules.requerido,
-            rules.correo,
-          ]"
-          label="Email"
-        ></v-text-field>
-  
-        <!-- Validación de la contraseña -->
-        <v-text-field
-          v-model="password"
-          :rules="[
-            rules.requerido,
-            rules.limit10Caracteres
-          ]"
-          label="Password"
-          type="password"
-        ></v-text-field>
-        
-        <v-btn class="mt-2" type="submit" block color="primary" :disabled="DisabledButton">Login</v-btn>
-      </v-form>
-      <router-link  v-if="disabledRegister" to="auth/register">
-        <v-btn class="mt-2 text-black" block variant="text" >Register</v-btn>
-      </router-link>
-    </v-sheet>
+            <v-text-field
+              v-model="password"
+              :type="show ? 'text' : 'password'"
+              @click:append-inner="show = !show"
+              :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+              prepend-inner-icon="mdi-lock"
+              :rules="[rules.requerido, rules.limit10Caracteres]"
+              label="Password"
+            />
+
+            <v-btn class="mt-2" type="submit" block color="primary" :disabled="DisabledButton">Login</v-btn>
+            <router-link v-if="disabledRegister" to="/auth/register">
+              <v-btn class="mt-2 text-black" block variant="text">Register</v-btn>
+            </router-link>
+          </v-form>
+
     
-    <template>
-      
-      <SnackBar :text="message" :value="activator" :color="colorSnack" />
-      
-    </template>
-    
-
-
-    <router-view/>
+          
+          <SnackBar :text="message" :value="activator" :color="colorSnack" />
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
   
 <script setup>
@@ -54,6 +55,10 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import SnackBar from '../components/SnackBar.vue';
 import { rules } from '@/constants/rules';
+
+
+
+  const show = ref(false)
 
   //snackBar
   const message = ref('hola perro') 

@@ -1,32 +1,16 @@
 <template>
  
  <v-app>
-    <v-app-bar
-     
+  <v-app-bar
       color="primary"
       elevation="0"
-      height="110px"
-      max-height="110px"
-      class="d-none d-md-block"
+      height="110"
+      position="0"
     >
-      <header-view />
+      <HeaderView />
     </v-app-bar>
-
-    <v-app-bar
-      color="#E0E0E0"
-      height="110px"
-      max-height="110px"
-      elevation="0"
-      class="d-md-none"
-    >
-      <HeaderResponsive />
-    </v-app-bar>
-
-    <v-main class="pt-16">
-      <v-container>
-        <router-view  class="pt-16"/>
-      </v-container>
-      
+    <v-main>
+      <router-view />
     </v-main>
  
   </v-app>
@@ -46,5 +30,11 @@
 //d-md-none "ocultar este elemento en pantallas medianas en adelante
 
 import HeaderView from './components/HeaderView.vue';
-import HeaderResponsive from './components/HeaderResponsive.vue';
 </script>
+
+
+<style>
+.headerView {
+  flex: 0%;
+}
+</style>

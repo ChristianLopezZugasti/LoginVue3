@@ -3,10 +3,8 @@
       <v-row class="d-flex justify-center align-center">
         <v-col cols="12" md="12">
           
-
-        <v-card outlined elevation="3">
           <router-view />
-        </v-card>
+        
 
         </v-col>
 
