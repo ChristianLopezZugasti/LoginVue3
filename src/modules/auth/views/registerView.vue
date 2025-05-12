@@ -81,13 +81,13 @@
   import { useRouter } from 'vue-router';
   import { validateRegister } from '../helpers/services';
   import { rules } from '@/constants/rules';
-  import SnackBar from '../components/SnackBar.vue';
-import { isAllowedDate } from '@/constants/functions';
+  import SnackBar from '@/components/SnackBar.vue';
+  import { isAllowedDate } from '@/constants/functions';
   
   const show = ref(false)
-  const date = ref(null)
- 
 
+ 
+  
    //snackBar
   const message = ref('hola perro') 
   const activator = ref(false)
@@ -99,7 +99,7 @@ import { isAllowedDate } from '@/constants/functions';
   const email = ref('test3@gmail.com');
   const password = ref('1234567');
   const nombre = ref('pedropon')
-
+  const date = ref(null)
   
  
 
@@ -108,7 +108,7 @@ import { isAllowedDate } from '@/constants/functions';
   // Función de submit
   const onSubmit = async() => {
     
-    console.log(typeof(date.value),date.value)
+    console.log(typeof(date.value),date.value.toISOString())
 
 
     const {valid} = await form.value.validate()
@@ -122,10 +122,11 @@ import { isAllowedDate } from '@/constants/functions';
    const request = {
       correo: email.value,
       password: password.value,
-      nombre: nombre.value
+      nombre: nombre.value,
+      cumpleanios: date.value.toISOString().split("T")[0],
     }
   
-    //TODO VERIFICAR REGISTER PONERLO BIEN 
+  
     const response = await validateRegister(request)
  
    

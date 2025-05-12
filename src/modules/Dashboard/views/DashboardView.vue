@@ -4,15 +4,14 @@
       <v-row>
         <v-col cols="7">
           <v-text-field
-          class="hover-textfield"
+          
             density="compact"
             v-model="search"
             placeholder="Buscar por nombre,id o descripcion"
             prepend-inner-icon="mdi-magnify"
-            variant="solo"
-            
+            variant="outlined"
             flat
-            hide-details
+            rounded
             single-line
             clearable
           ></v-text-field>
@@ -22,14 +21,15 @@
           @click="activatorAdd = !activatorAdd"
           prepend-icon="mdi-plus"
           text="Añadir producto"
-          rounded="">
+          rounded>
           
           </v-btn>
         </v-col>
       </v-row>
       
 
-    <v-data-table :headers="headers" :items="productos" :hover="true"  :search="search" fixed-header   height="410px" >
+    <v-data-table :headers="headers" :items="productos" :hover="true"  :search="search" fixed-header   height="410px"  
+   >
         
       
     <template v-slot:item.CreatedAt="{item}">
@@ -138,7 +138,8 @@
                   required
                 ></v-text-field>
                 <v-combobox
-                   v-model="complementos"
+                 
+                  v-model="complementos"
                   :items="items"
                   label="Categoría"
                   chips
@@ -173,8 +174,9 @@
                   ></v-text-field>
                 </v-col>  
 
-                <v-col cols="4">
+                <v-col cols="4" >
                   <v-switch
+                 
                   v-model="disponible"
                   color="green"
                   label="Activo"
@@ -197,7 +199,7 @@
           </v-card>
     </v-dialog>
           
-      <AddElementView :value="activatorAdd"  @add="addProduct"  @close="activatorAdd=false"/>
+    <AddElementView :value="activatorAdd"  @add="()=>{ activatorAdd = false; loadProduct()}"  @close="activatorAdd=false"/>
       
     </v-card>
   </v-container>
@@ -210,19 +212,12 @@
   import { onMounted, ref } from 'vue'
  
 import AddElementView from '../components/addElementView.vue';
-import { AddProducto, DeleteProducto, obtenerProductos, obtenerProductosPorId, UpdateProducto } from '../helpers/services';
+import {  DeleteProducto, obtenerProductos, obtenerProductosPorId, UpdateProducto } from '../helpers/services';
 import { rules } from '@/constants/rules';
 import { formatDate } from '@/constants/functions';
+import { headers } from '@/constants/tableHeaders';
+import { items } from '@/constants/arrays';
   
-const items = [
-    'Alimentos',
-    'Tecnologia',
-    'Linea Blanca',
-    'Hogar',
-    'Ropa',
-    'Juguetes',
-    'Deportes',
-  ]
 
 
 const search = ref('')
@@ -250,19 +245,6 @@ const DeleteActivator = ref(false)
 
   const selectedId = ref('')
 
-  //los headers  necesitan coincidir con los nombres de cada fila 
-  const headers = [
-    { title: 'ID', value: 'idproducto' },
-    { title: 'Activo', value: 'disponible'},
-    { title: 'Name', value: 'nombre' },
-    { title: 'Descripción', value: 'descripcion' },
-    { title: 'Precio', value: 'precio'},
-    { title: 'OFF', value: 'descuento' },
-    { title: 'Fecha', value: 'CreatedAt'},
-    { title: 'Categoria', value: 'complementos'},
-    { title: 'Actions', value: 'actions' },
-  ]
-
   // Register current, hovered row to activator
   // Preferrably called before edit()
   function register (event) {
@@ -277,7 +259,7 @@ const DeleteActivator = ref(false)
     const producto = await obtenerProductosPorId(id)
    // console.log('producto',producto)
 
-   dialog.value = true
+    dialog.value = true
     nombre.value = producto.nombre
     descripcion.value = producto.descripcion
     precio.value = producto.precio
@@ -288,8 +270,6 @@ const DeleteActivator = ref(false)
       complementos.value.push(comp.nombre)
     }
     
-
-   
     selectedId.value = id
     
   }
@@ -328,33 +308,6 @@ const DeleteActivator = ref(false)
     loadProduct()
     
   }
-
-
-  const addProduct = async(nombre,descripcion,precio,descuento,complementos) => {
-    
-   
-    const request = {
-      nombre,
-      descripcion,
-      precio,
-      descuento: parseFloat(descuento),
-      complementos
-    }
-
-    try{
-      activatorAdd.value = false
-      const response = await AddProducto(request)
-      console.log(response)
-    }
-    catch(error){
-      console.error('Error al agregar el producto:', error)
-    }
-
-    //cargar productos otra vez 
-    loadProduct()
-  }
-
-
   const loadProduct = async() => {
     const response = await obtenerProductos()
     productos.value = response
@@ -363,14 +316,10 @@ const DeleteActivator = ref(false)
   onMounted(async() => {
     loadProduct()
   })
-
-
 </script>
 
 <style scoped>
   .v-data-table {
     max-width: 100%;
-    
   }
-  
 </style>

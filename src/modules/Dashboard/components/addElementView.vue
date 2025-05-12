@@ -15,8 +15,6 @@
       <v-card-text>
           
           
-          
-          
           <v-form ref="form" @submit.prevent="onSubmit">
             <!-- Validación del email -->
             <v-text-field
@@ -52,7 +50,7 @@
                     label="descuento %"
                     placeholder="0"
                     :rules="[
-                      rules.requerido,
+                      
                       rules.number,
                     ]"
                   ></v-text-field>
@@ -81,32 +79,32 @@
     
 
     <router-view/>
+
+    <SnackBar :color="colorSnack" :text="message" :value="activator" ></SnackBar>
   </template>
   
   <script setup>
-  import { rules } from '@/constants/rules';
+  import { items } from '@/constants/arrays';
+import { rules } from '@/constants/rules';
 import { ref } from 'vue';
-  
+import { AddProducto } from '../helpers/services';
+import SnackBar from '@/components/SnackBar.vue';
 
   const emit = defineEmits(['add','close']);
 
   const form = ref()
+  const activatorAdd = ref(false)
  
   
   const nombre = ref('');
   const descripcion = ref('');
-  const precio = ref();
+  const precio = ref(100);
   const descuento = ref(0);
 
-  const items = [
-    'Alimentos',
-    'Tecnologia',
-    'Linea Blanca',
-    'Hogar',
-    'Ropa',
-    'Juguetes',
-    'Deportes',
-  ]
+  //snackBar
+  const message = ref('')
+  const activator = ref(false)
+ const colorSnack = ref('red')
 
   const complementos = ref([])
 
@@ -127,8 +125,25 @@ import { ref } from 'vue';
       return;
     }
     
+     const request = {
+      nombre: nombre.value,
+      descripcion: descripcion.value,
+      precio: precio.value,
+      descuento: parseFloat(descuento.value),
+      complementos: complementos.value,
+    }
     
-    emit('add',nombre.value,descripcion.value,precio.value,descuento.value,complementos.value)  
+    const response = await AddProducto(request)
+   
+    if(!response.ok){
+       activateSnack('El producto ya existe', 'red')
+       activatorAdd.value = false
+       emit('add')
+       return
+    }
+  
+    activateSnack('Producto añadido correctamente', 'green')
+    emit('add')
 
     nombre.value = ''
     descripcion.value = ''
@@ -143,8 +158,19 @@ import { ref } from 'vue';
     nombre.value = ''
     descripcion.value = ''
     precio.value = ''
-    
+    complementos.value = []
     
     emit('close')
   };
+
+
+  const activateSnack = (messageParam, color = "primary") => {
+  message.value = messageParam;
+  colorSnack.value = color;
+  activator.value = true;
+  setTimeout(() => {
+    activator.value = false;
+    
+  }, 3000);
+};
   </script>

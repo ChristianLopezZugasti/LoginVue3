@@ -34,15 +34,19 @@ export const obtenerProductos = async () => {
 export const AddProducto = async (producto) => {
 
     try {
-        console.log(typeof(producto.descuento), producto.descuento)
         const response = await Api.post('/productos', producto) 
-        console.log(response.data)
-        return response.data
+        return {
+                    response: response.data,
+                    ok: true,
+                }
 
     }
     catch (error) {
         if( error.response?.status === 400){ //si es un error de axios
-            return error.response.data
+            return {
+                ok:  false,
+                message: error.response.data
+            }
     }
     console.log(error) 
     throw new Error('No se pudo realizar la peticion')

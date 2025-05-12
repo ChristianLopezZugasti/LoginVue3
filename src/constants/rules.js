@@ -40,11 +40,8 @@ export const rules = {
 
     const fechaActual = new Date();
     
-    console.log(fechaActual);
-    console.log(fechaNacimiento);
-
     let edad = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
-    console.log(edad);
+   
     const mes = fechaActual.getMonth() - fechaNacimiento.getMonth();
   
     if (mes < 0 || (mes === 0 && fechaActual.getDate() < fechaNacimiento.getDate())) {

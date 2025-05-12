@@ -11,5 +11,6 @@ export function formatDate(mysqlDate) {
 export const isAllowedDate = (dateStr) => {
     const date = new Date(dateStr)
     const max = new Date() // hoy
-    return  date < max
+    const min = new Date('1950-01-01') // fecha minima
+    return  date < max && date > min 
   }

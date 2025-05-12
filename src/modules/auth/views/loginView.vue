@@ -53,7 +53,7 @@
 import {  ref,computed} from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import SnackBar from '../components/SnackBar.vue';
+import SnackBar from '@/components/SnackBar.vue';
 import { rules } from '@/constants/rules';
 
 

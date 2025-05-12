@@ -32,9 +32,6 @@ const nombre = ref(localStorage.getItem("user"))
 const router = useRouter()
 
 
-
-
-
 const logout = () => {
     localStorage.removeItem("user")
     localStorage.removeItem("token")
